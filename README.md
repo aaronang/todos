@@ -1,2 +1,2 @@
-# todos
-Todo application written in VanillaJS
+# Todos
+Todo application written in VanillaJS.
