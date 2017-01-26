@@ -8,31 +8,32 @@
 </head>
 
 <body>
-  <h1>Todo List</h1>
+  <div class="todoapp">
+    <header>
+      <h1>todos</h1>
+      <input autofocus class="new-todo" placeholder="What needs to be done?" type="text">
+    </header>
 
-  <div>
-    <button onclick="handlers.toggleAll()">Toggle All</button>
+    <section class="main">
+      <input class="toggle-all" onclick="handlers.toggleAll()" type="checkbox">
+
+    </section>
+
+    <div>
+      <button onclick="handlers.changeTodo()">Change Todo</button>
+      <input id="changeTodoPositionInput" type="number">
+      <input id="changeTodoTextInput" type="text">
+    </div>
+
+    <div>
+      <button onclick="handlers.toggleCompleted()">Toggle Completed</button>
+      <input id="toggleCompletedPositionInput" type="number">
+    </div>
+
+    <ul></ul>
+
+    <script src="script.js" charset="utf-8"></script>
   </div>
-
-  <div>
-    <button onclick="handlers.addTodo()">Add</button>
-    <input id="addTodoTextInput" type="text">
-  </div>
-
-  <div>
-    <button onclick="handlers.changeTodo()">Change Todo</button>
-    <input id="changeTodoPositionInput" type="number">
-    <input id="changeTodoTextInput" type="text">
-  </div>
-
-  <div>
-    <button onclick="handlers.toggleCompleted()">Toggle Completed</button>
-    <input id="toggleCompletedPositionInput" type="number">
-  </div>
-
-  <ul></ul>
-
-  <script src="script.js" charset="utf-8"></script>
 </body>
 
 </html>

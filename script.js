@@ -36,9 +36,9 @@ var todoList = {
 
 var handlers = {
   addTodo: function() {
-    var addTodoTextInput = document.getElementById('addTodoTextInput');
-    todoList.addTodo(addTodoTextInput.value);
-    addTodoTextInput.value = '';
+    var input = document.getElementsByClassName('new-todo')[0];
+    todoList.addTodo(input.value);
+    input.value = '';
     view.displayTodos();
   },
   changeTodo: function() {
@@ -88,11 +88,18 @@ var view = {
   },
   setUpEventListeners: function() {
     var todosUl = document.querySelector('ul');
+    var newTodo = document.getElementsByClassName('new-todo')[0];
 
     todosUl.addEventListener('click', (e) => {
       var clickedElement = e.target;
       if (clickedElement.className === 'deleteButton') {
         handlers.deleteTodo(parseInt(clickedElement.parentNode.id));
+      }
+    });
+
+    newTodo.addEventListener('keyup', (e) => {
+      if (e.keyCode == 13) {
+        handlers.addTodo();
       }
     });
   }
