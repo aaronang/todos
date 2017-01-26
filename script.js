@@ -67,24 +67,38 @@ var handlers = {
 
 var view = {
   displayTodos: function() {
-    var todosUl = document.querySelector('ul');
-    todosUl.innerHTML = '';
+    var ul = document.querySelector('ul');
+    ul.innerHTML = '';
 
     todoList.todos.forEach(function(todo, i) {
-      var todoLi = document.createElement('li');
-      var todoTextWithCompletion = todo.completed ? '(x)' : '( )' + todo.todoText;
-
-      todoLi.id = i;
-      todoLi.textContent = todoTextWithCompletion;
-      todoLi.appendChild(view.createDeleteButton());
-      todosUl.appendChild(todoLi);
+      var li = document.createElement('li');
+      li.id = i;
+      li.appendChild(view.createTodoItem(todo));
+      ul.appendChild(li);
     }, this);
   },
   createDeleteButton: function() {
     var deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Delete';
-    deleteButton.className = 'deleteButton';
+    deleteButton.className = 'destroy';
     return deleteButton;
+  },
+  createTodoItem: function(todo) {
+    var div = document.createElement('div');
+    div.className = 'view';
+
+    var toggle = document.createElement('input');
+    toggle.className = 'toggle';
+    toggle.type = 'checkbox';
+
+    var label = document.createElement('label');
+    label.textContent = todo.todoText;
+
+    div.appendChild(toggle);
+    div.appendChild(label);
+
+    div.appendChild(view.createDeleteButton());
+
+    return div;
   },
   setUpEventListeners: function() {
     var todosUl = document.querySelector('ul');
@@ -92,7 +106,7 @@ var view = {
 
     todosUl.addEventListener('click', (e) => {
       var clickedElement = e.target;
-      if (clickedElement.className === 'deleteButton') {
+      if (clickedElement.className === 'destroy') {
         handlers.deleteTodo(parseInt(clickedElement.parentNode.id));
       }
     });
