@@ -41,12 +41,8 @@ var handlers = {
     input.value = '';
     view.displayTodos();
   },
-  changeTodo: function() {
-    var changeTodoPositionInput = document.getElementById('changeTodoPositionInput');
-    var changeTodoTextInput = document.getElementById('changeTodoTextInput');
-    todoList.changeTodo(changeTodoPositionInput.valueAsNumber, changeTodoTextInput.value);
-    changeTodoPositionInput.value = '';
-    changeTodoTextInput.value = '';
+  changeTodo: function(position, val) {
+    todoList.changeTodo(position, val);
     view.displayTodos();
   },
   deleteTodo: function(position) {
@@ -82,6 +78,19 @@ var view = {
     deleteButton.className = 'destroy';
     return deleteButton;
   },
+  createEditInput: function() {
+    var edit = document.createElement('input');
+    edit.className = 'edit';
+
+    edit.addEventListener('keyup', (e) => {
+      if (e.keyCode == 13) {
+        handlers.changeTodo(Number(e.target.parentElement.id), e.target.value);
+        edit.parentNode.removeChild(edit);
+      }
+    });
+
+    return edit;
+  },
   createTodoItem: function(todo) {
     var div = document.createElement('div');
     div.className = 'view';
@@ -92,6 +101,14 @@ var view = {
 
     var label = document.createElement('label');
     label.textContent = todo.todoText;
+
+    var edit = this.createEditInput();
+
+    label.addEventListener('dblclick', (e) => {
+      e.target.parentNode.insertAdjacentElement('afterend', edit);
+      e.target.parentNode.parentNode.className = 'editing';
+      edit.focus();
+    });
 
     div.appendChild(toggle);
     div.appendChild(label);
