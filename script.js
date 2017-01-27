@@ -49,10 +49,8 @@ var handlers = {
     todoList.deleteTodo(position);
     view.displayTodos();
   },
-  toggleCompleted: function() {
-    var toggleCompletedPositionInput = document.getElementById('toggleCompletedPositionInput');
-    todoList.toggleCompleted(toggleCompletedPositionInput.valueAsNumber);
-    toggleCompletedPositionInput.value = '';
+  toggleCompleted: function(position) {
+    todoList.toggleCompleted(position);
     view.displayTodos();
   },
   toggleAll: function() {
@@ -69,6 +67,7 @@ var view = {
     todoList.todos.forEach(function(todo, i) {
       var li = document.createElement('li');
       li.id = i;
+      li.className = todo.completed ? 'completed' : '';
       li.appendChild(view.createTodoItem(todo));
       ul.appendChild(li);
     }, this);
@@ -96,6 +95,13 @@ var view = {
     toggle.className = 'toggle';
     toggle.type = 'checkbox';
 
+    toggle.addEventListener('click', function(e) {
+      var parent = e.target.parentNode.parentNode;
+      var id = parent.id;
+      parent.className = parent.className === 'completed' ? '' : 'completed';
+      handlers.toggleCompleted(Number(id));
+    });
+
     return toggle;
   },
   createTodoItem: function(todo) {
@@ -103,6 +109,7 @@ var view = {
     div.className = 'view';
 
     var toggle = this.createToggle();
+    toggle.checked = todo.completed;
 
     var label = document.createElement('label');
     label.textContent = todo.todoText;
