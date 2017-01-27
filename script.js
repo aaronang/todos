@@ -91,13 +91,18 @@ var view = {
 
     return edit;
   },
+  createToggle: function() {
+    var toggle = document.createElement('input');
+    toggle.className = 'toggle';
+    toggle.type = 'checkbox';
+
+    return toggle;
+  },
   createTodoItem: function(todo) {
     var div = document.createElement('div');
     div.className = 'view';
 
-    var toggle = document.createElement('input');
-    toggle.className = 'toggle';
-    toggle.type = 'checkbox';
+    var toggle = this.createToggle();
 
     var label = document.createElement('label');
     label.textContent = todo.todoText;
@@ -105,8 +110,10 @@ var view = {
     var edit = this.createEditInput();
 
     label.addEventListener('dblclick', (e) => {
+      var val = e.target.textContent;
       e.target.parentNode.insertAdjacentElement('afterend', edit);
       e.target.parentNode.parentNode.className = 'editing';
+      edit.value = val;
       edit.focus();
     });
 
@@ -131,6 +138,14 @@ var view = {
     newTodo.addEventListener('keyup', (e) => {
       if (e.keyCode == 13) {
         handlers.addTodo();
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      var edit = document.getElementsByClassName('edit')[0];
+      if (edit && e.target.className !== 'edit') {
+        handlers.changeTodo(Number(edit.parentElement.id), edit.value);
+        edit.parentNode.removeChild(edit);
       }
     });
   }
