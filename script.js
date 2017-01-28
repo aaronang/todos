@@ -6,17 +6,21 @@ var todos = {
         text: text,
         completed: false
       });
+    this.persist();
   },
   edit: function(position, text) {
     if (this.valid(text))
       this.todos[position].text = text;
+    this.persist();
   },
   destroy: function(position) {
     this.todos.splice(position, 1);
+    this.persist();
   },
   toggle: function(position) {
     var todo = this.todos[position];
     todo.completed = !todo.completed;
+    this.persist();
   },
   toggleAll: function() {
     var completed = this.completed().length;
@@ -24,6 +28,7 @@ var todos = {
     this.todos.forEach((t) => {
       t.completed = !(completed === this.size());
     }, this);
+    this.persist();
   },
   size: function() {
     return this.todos.length;
@@ -35,6 +40,9 @@ var todos = {
   },
   valid: function(text) {
     return text.replace(/\s+/g, '');
+  },
+  persist: function() {
+    localStorage.setItem('data', JSON.stringify(this.todos));
   }
 };
 
@@ -164,4 +172,12 @@ var view = {
   }
 };
 
-view.setUpEventListeners();
+function main() {
+  view.setUpEventListeners();
+  if (localStorage.length) {
+    todos.todos = JSON.parse(localStorage.getItem('data'));
+    view.displayTodos();
+  }
+}
+
+main();
