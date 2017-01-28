@@ -37,12 +37,14 @@ var todoList = {
 var handlers = {
   addTodo: function() {
     var input = document.getElementsByClassName('new-todo')[0];
-    todoList.addTodo(input.value);
+    if (input.value.replace(/\s+/g, ''))
+      todoList.addTodo(input.value);
     input.value = '';
     view.displayTodos();
   },
   changeTodo: function(position, val) {
-    todoList.changeTodo(position, val);
+    if (val.replace(/\s+/g, ''))
+      todoList.changeTodo(position, val);
     view.displayTodos();
   },
   deleteTodo: function(position) {
