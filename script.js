@@ -1,13 +1,15 @@
 var todos = {
   todos: [],
   add: function(text) {
-    this.todos.push({
-      text: text,
-      completed: false
-    });
+    if (this.valid(text))
+      this.todos.push({
+        text: text,
+        completed: false
+      });
   },
   edit: function(position, text) {
-    this.todos[position].text = text;
+    if (this.valid(text))
+      this.todos[position].text = text;
   },
   destroy: function(position) {
     this.todos.splice(position, 1);
@@ -30,20 +32,21 @@ var todos = {
     return this.todos.filter((t) => {
       return t.completed;
     });
+  },
+  valid: function(text) {
+    return text.replace(/\s+/g, '');
   }
 };
 
 var handlers = {
   add: function() {
     var input = document.getElementsByClassName('new-todo')[0];
-    if (input.value.replace(/\s+/g, ''))
-      todos.add(input.value);
+    todos.add(input.value);
     input.value = '';
     view.displayTodos();
   },
-  edit: function(position, val) {
-    if (val.replace(/\s+/g, ''))
-      todos.edit(position, val);
+  edit: function(position, text) {
+    todos.edit(position, text);
     view.displayTodos();
   },
   destroy: function(position) {
@@ -66,12 +69,15 @@ var view = {
     ul.innerHTML = '';
 
     todos.todos.forEach(function(todo, i) {
-      var li = document.createElement('li');
-      li.id = i;
-      li.className = todo.completed ? 'completed' : '';
-      li.appendChild(view.createTodoItem(todo));
-      ul.appendChild(li);
+      ul.appendChild(this.createListItem(todo, i));
     }, this);
+  },
+  createListItem: function(todo, i) {
+    var li = document.createElement('li');
+    li.id = i;
+    li.className = todo.completed ? 'completed' : '';
+    li.appendChild(this.createTodoItem(todo));
+    return li;
   },
   createDeleteButton: function() {
     var deleteButton = document.createElement('button');
@@ -128,14 +134,12 @@ var view = {
     div.appendChild(toggle);
     div.appendChild(label);
 
-    div.appendChild(view.createDeleteButton());
+    div.appendChild(this.createDeleteButton());
 
     return div;
   },
   setUpEventListeners: function() {
     var todosUl = document.querySelector('ul');
-    var newTodo = document.getElementsByClassName('new-todo')[0];
-
     todosUl.addEventListener('click', (e) => {
       var clickedElement = e.target;
       if (clickedElement.className === 'destroy') {
@@ -143,6 +147,7 @@ var view = {
       }
     });
 
+    var newTodo = document.getElementsByClassName('new-todo')[0];
     newTodo.addEventListener('keyup', (e) => {
       if (e.keyCode == 13) {
         handlers.add();
