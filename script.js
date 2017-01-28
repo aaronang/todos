@@ -13,7 +13,7 @@ var todos = {
       this.todos[position].text = text;
     this.persist();
   },
-  destroy: function(position) {
+  delete: function(position) {
     this.todos.splice(position, 1);
     this.persist();
   },
@@ -60,8 +60,8 @@ var handlers = {
     todos.edit(position, text);
     view.update();
   },
-  destroy: function(position) {
-    todos.destroy(position);
+  delete: function(position) {
+    todos.delete(position);
     view.update();
   },
   toggle: function(position) {
@@ -170,7 +170,7 @@ var view = {
     todosUl.addEventListener('click', (e) => {
       var clickedElement = e.target;
       if (clickedElement.className === 'destroy') {
-        handlers.destroy(parseInt(clickedElement.parentNode.id));
+        handlers.delete(parseInt(clickedElement.parentNode.parentNode.id));
       }
     });
 
@@ -195,6 +195,6 @@ var view = {
   view.setUpEventListeners();
   if (localStorage.length) {
     todos.todos = JSON.parse(localStorage.getItem('data'));
-    view.update();
   }
-})()
+  view.update();
+})();
