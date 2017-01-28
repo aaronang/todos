@@ -1,62 +1,61 @@
-var todoList = {
+var todos = {
   todos: [],
-  addTodo: function(todoText) {
+  add: function(text) {
     this.todos.push({
-      todoText: todoText,
+      text: text,
       completed: false
     });
   },
-  changeTodo: function(position, todoText) {
-    this.todos[position].todoText = todoText;
+  edit: function(position, text) {
+    this.todos[position].text = text;
   },
-  deleteTodo: function(position) {
+  destroy: function(position) {
     this.todos.splice(position, 1);
   },
-  toggleCompleted: function(position) {
+  toggle: function(position) {
     var todo = this.todos[position];
     todo.completed = !todo.completed;
   },
   toggleAll: function() {
-    var totalTodos = this.todos.length;
-    var completedTodos = 0;
+    var completed = this.completed().length;
 
-    this.todos.forEach((todo) => {
-      if (todo.completed) completedTodos++;
-    });
-
-    this.todos.forEach((todo) => {
-      if (completedTodos === totalTodos) {
-        todo.completed = false;
-      } else {
-        todo.completed = true;
-      }
+    this.todos.forEach((t) => {
+      t.completed = !(completed === this.size());
+    }, this);
+  },
+  size: function() {
+    return this.todos.length;
+  },
+  completed: function() {
+    return this.todos.filter((t) => {
+      return t.completed;
     });
   }
 };
 
 var handlers = {
-  addTodo: function() {
+  add: function() {
     var input = document.getElementsByClassName('new-todo')[0];
     if (input.value.replace(/\s+/g, ''))
-      todoList.addTodo(input.value);
+      todos.add(input.value);
     input.value = '';
     view.displayTodos();
   },
-  changeTodo: function(position, val) {
+  edit: function(position, val) {
     if (val.replace(/\s+/g, ''))
-      todoList.changeTodo(position, val);
+      todos.edit(position, val);
     view.displayTodos();
   },
-  deleteTodo: function(position) {
-    todoList.deleteTodo(position);
+  destroy: function(position) {
+    todos.destroy(position);
     view.displayTodos();
   },
-  toggleCompleted: function(position) {
-    todoList.toggleCompleted(position);
+  toggle: function(position) {
+    todos.toggle(position);
     view.displayTodos();
   },
   toggleAll: function() {
-    todoList.toggleAll();
+    todos.toggleAll();
     view.displayTodos();
   },
 };
@@ -66,7 +65,7 @@ var view = {
     var ul = document.querySelector('ul');
     ul.innerHTML = '';
 
-    todoList.todos.forEach(function(todo, i) {
+    todos.todos.forEach(function(todo, i) {
       var li = document.createElement('li');
       li.id = i;
       li.className = todo.completed ? 'completed' : '';
@@ -85,7 +84,7 @@ var view = {
 
     edit.addEventListener('keyup', (e) => {
       if (e.keyCode == 13) {
-        handlers.changeTodo(Number(e.target.parentElement.id), e.target.value);
+        handlers.edit(Number(e.target.parentElement.id), e.target.value);
         edit.parentNode.removeChild(edit);
       }
     });
@@ -101,7 +100,7 @@ var view = {
       var parent = e.target.parentNode.parentNode;
       var id = parent.id;
       parent.className = parent.className === 'completed' ? '' : 'completed';
-      handlers.toggleCompleted(Number(id));
+      handlers.toggle(Number(id));
     });
 
     return toggle;
@@ -114,7 +113,7 @@ var view = {
     toggle.checked = todo.completed;
 
     var label = document.createElement('label');
-    label.textContent = todo.todoText;
+    label.textContent = todo.text;
 
     var edit = this.createEditInput();
 
@@ -140,20 +139,20 @@ var view = {
     todosUl.addEventListener('click', (e) => {
       var clickedElement = e.target;
       if (clickedElement.className === 'destroy') {
-        handlers.deleteTodo(parseInt(clickedElement.parentNode.id));
+        handlers.destroy(parseInt(clickedElement.parentNode.id));
       }
     });
 
     newTodo.addEventListener('keyup', (e) => {
       if (e.keyCode == 13) {
-        handlers.addTodo();
+        handlers.add();
       }
     });
 
     document.addEventListener('click', function(e) {
       var edit = document.getElementsByClassName('edit')[0];
       if (edit && e.target.className !== 'edit') {
-        handlers.changeTodo(Number(edit.parentElement.id), edit.value);
+        handlers.edit(Number(edit.parentElement.id), edit.value);
         edit.parentNode.removeChild(edit);
       }
     });
