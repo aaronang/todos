@@ -26,11 +26,14 @@ var todos = {
     var completed = this.completed().length;
 
     this.todos.forEach((t) => {
-      t.completed = !(completed === this.size());
+      t.completed = !(completed === this.count());
     }, this);
     this.persist();
   },
-  size: function() {
+  left: function() {
+    return this.count() - this.completed().length;
+  },
+  count: function() {
     return this.todos.length;
   },
   completed: function() {
@@ -51,27 +54,31 @@ var handlers = {
     var input = document.getElementsByClassName('new-todo')[0];
     todos.add(input.value);
     input.value = '';
-    view.displayTodos();
+    view.update();
   },
   edit: function(position, text) {
     todos.edit(position, text);
-    view.displayTodos();
+    view.update();
   },
   destroy: function(position) {
     todos.destroy(position);
-    view.displayTodos();
+    view.update();
   },
   toggle: function(position) {
     todos.toggle(position);
-    view.displayTodos();
+    view.update();
   },
   toggleAll: function() {
     todos.toggleAll();
-    view.displayTodos();
+    view.update();
   },
 };
 
 var view = {
+  update: function() {
+    this.displayTodos();
+    this.createFooter();
+  },
   displayTodos: function() {
     var ul = document.querySelector('ul');
     ul.innerHTML = '';
@@ -79,6 +86,18 @@ var view = {
     todos.todos.forEach(function(todo, i) {
       ul.appendChild(this.createListItem(todo, i));
     }, this);
+  },
+  createFooter: function() {
+    var footer = document.querySelector('footer')
+    footer.className = 'footer';
+    footer.innerHTML = '<span class="todo-count">' + this.countHTML() + '</span>';
+
+    footer.style.display = todos.count() ? 'block' : 'none';
+  },
+  countHTML: function() {
+    var plural = todos.left() == 1 ? '' : 's';
+    return '<strong>' + todos.left() + '</strong> item' +
+      plural + ' left';
   },
   createListItem: function(todo, i) {
     var li = document.createElement('li');
@@ -172,12 +191,10 @@ var view = {
   }
 };
 
-function main() {
+(function main() {
   view.setUpEventListeners();
   if (localStorage.length) {
     todos.todos = JSON.parse(localStorage.getItem('data'));
-    view.displayTodos();
+    view.update();
   }
-}
-
-main();
+})()
